@@ -3,6 +3,7 @@ from blogapp import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from blogapp import login
+from hashlib import md5
 
 class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -10,6 +11,8 @@ class User(UserMixin, db.Model):
 	email = db.Column(db.String(120), index=True, unique=True)
 	password_hash = db.Column(db.String(128))
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
+	about_me = db.Column(db.String(140))
+	last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
 	def __repr__(self):
 		return '<User {}>'.format(self.username)
@@ -19,6 +22,11 @@ class User(UserMixin, db.Model):
 
 	def check_password(self, password):
 		return check_password_hash(self.password_hash, password)
+
+	# To get the image of specified size from Gravatar Service
+	def avatar(self, size):
+		hash_val = md5(self.email.lower().encode('utf-8')).hexdigest()
+		return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(hash_val, size)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

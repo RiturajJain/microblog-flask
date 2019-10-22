@@ -1,9 +1,17 @@
 from blogapp import app ,db
 from flask import render_template, flash, redirect, url_for, request
-from blogapp.forms import LoginForm, RegistrationForm
+from blogapp.forms import LoginForm, RegistrationForm, EditProfileForm
 from flask_login import current_user, login_user, logout_user, login_required
 from blogapp.models import User
 from werkzeug.urls import url_parse
+from datetime import datetime
+
+# Execute this function first when user makes a request to the server
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 @app.route('/')
 @app.route('/index')
@@ -71,3 +79,34 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+# View Function to display Profile of current logged in user
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts)
+
+# View Function to edit User Profile who is logged in currently
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    # If POST request is made and data is valid
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your profile has been updated!')
+        return redirect(url_for('edit_profile'))
+
+    # Pre-populate the form fields with details present in the database when GET request is made
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
