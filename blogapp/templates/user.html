@@ -6,7 +6,25 @@
 
 {% block content %}
 
-    <div class="media">
+    <div class="card mb-3" style="max-width: 540px;">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="{{ user.avatar(128) }}" class="card-img" alt="Profile Photo">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h3 class="card-title">User: {{ user.username }}</h3>
+            {% if user.about_me %}<p class=card-text>{{ user.about_me }}</p>{% endif %}
+            {% if user.last_seen %}<p class=card-text>Last Seen on: {{ user.last_seen }}</p>{% endif %}
+            {% if user == current_user %}
+                <p class=card-text><a href="{{ url_for('edit_profile') }}">Edit Your Profile</a></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--
+     <div class="media">
       <img src="{{ user.avatar(128) }}" class="mr-3" alt="Profile Photo">
       <div class="media-body">
         <h1>User: {{ user.username }}</h1>
@@ -19,7 +37,8 @@
     </div>
 
     <hr>
-
+    -->
+    
     {% for post in posts %}
 	    <div class="media">
           <img src="{{ post.author.avatar(42) }}" class="mr-3" alt="Profile Photo">

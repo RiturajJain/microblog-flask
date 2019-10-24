@@ -1,8 +1,39 @@
 {% extends "base.html" %}
 
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+    <div class="container">
+      <h1>Hi, {{ current_user.username }}!</h1>
+      {% for post in posts %}
+      <div class="post"><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+      {% if current_user == post.author %}
+        <button class="btn btn-danger"><a href="{{ url_for('delete_post', post_id=post.id) }}">Delete Post</a></button>
+      {% endif %}
+      {% endfor %}
+
+      <div class="form-group">
+        <form action="" method="post" class="post-form">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(size=32, placeholder='Enter post title', class='form-control') }}<br>
+                {% for error in form.title.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.body.label }}<br>
+                {{ form.body(cols=50, rows=4, placeholder='Enter post content', class='form-control') }}<br>
+                {% for error in form.body.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit(class='btn btn-success') }}</p>
+        </form>
+      </div>
+
+    </div>
 {% endblock %}

@@ -1,8 +1,8 @@
 from blogapp import app ,db
 from flask import render_template, flash, redirect, url_for, request
-from blogapp.forms import LoginForm, RegistrationForm, EditProfileForm
+from blogapp.forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm
 from flask_login import current_user, login_user, logout_user, login_required
-from blogapp.models import User
+from blogapp.models import User, Post
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -13,21 +13,33 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('index.html', title="Home", posts=posts)
+    form = CreatePostForm()
+    posts = Post.query.all()
+    if form.validate_on_submit():
+        post = Post(
+            title=form.title.data,
+            body=form.body.data,
+            user_id=current_user.id
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash('New Post has been created!')
+        return redirect(url_for('index'))
+
+    return render_template('index.html', title="Home", form=form, posts=posts)
+
+@app.route('/delete/<int:post_id>')
+@login_required
+def delete_post(post_id):
+
+    post = Post.query.get(post_id)
+    db.session.delete(post)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -50,7 +62,7 @@ def login():
         # If next query argument is provided in the url,
         # redirect user to that url
         next_page = request.args.get('next')
-        # If next query argument is not provided or relative path is not provided 
+        # If next query argument is not provided or relative path is not provided
         # (full url with domain name is provided), redirect to index
         # Second condition ensures that the redirect stays within the same site as application
         if not next_page or url_parse(next_page).netloc != '':
