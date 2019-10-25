@@ -1,19 +1,39 @@
 body {
-  background: rgba(227, 138, 30, 0.5);
+  background: rgba(82, 82, 199, 0.7);
 }
 
-h1 {
-  text-align: center;
+.container {
+	margin-top: 20px;
 }
 
-.post {
-  border: 0.5px solid grey;
-  padding-left: 20px;
-  border-radius: 5px;
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: box-shadow 0.3s;
+  transition: transform 1s;
+  margin: 30px;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  transform: scale(1.05);
 }
 
 .post-form {
-  border: 0.5px solid grey;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
   padding: 20px;
   border-radius: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.btn-danger a {
+	color: white;
+	text-decoration: none;
+}
+
+.post-form-label {
+	font-size: 1.2rem;
 }

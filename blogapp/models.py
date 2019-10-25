@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
 	password_hash = db.Column(db.String(128))
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	about_me = db.Column(db.String(140))
-	last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+	last_seen = db.Column(db.DateTime, default=datetime.now)
 
 	def __repr__(self):
 		return '<User {}>'.format(self.username)
@@ -32,7 +32,7 @@ class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(100))
 	body = db.Column(db.Text)
-	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.now)
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 	def __repr__(self):

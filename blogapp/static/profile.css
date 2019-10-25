@@ -1,3 +1,28 @@
+body {
+  background: rgba(82, 82, 199, 0.7);
+}
+
 .media {
 	margin: 20px;
+	padding: 10px;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: box-shadow 0.3s;
+  transition: transform 1s;
+  margin: 30px;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  transform: scale(1.05);
+}
+
+.btn-danger a {
+	color: white;
+	text-decoration: none;
 }

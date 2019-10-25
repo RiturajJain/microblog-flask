@@ -10,7 +10,7 @@ from datetime import datetime
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
+        current_user.last_seen = datetime.now()
         db.session.commit()
 
 @app.route('/', methods=['GET', 'POST'])
@@ -97,10 +97,8 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    posts = user.posts
+
     return render_template('user.html', user=user, posts=posts)
 
 # View Function to edit User Profile who is logged in currently
